@@ -12,7 +12,7 @@ W zadaniu nie ma również nic o swagger ale w dzisiejszych czasach aby dobrze p
 
 Kolejnym dodatkowym element aby mieć pewność, że wszystko działa poprawnie było dodanie UnitTestow oraz napisane Seeder’ów do bazy danych.
 
-Ostatnim elementem, o którym warto wspomnie to pliczek _ide_helper.php jest to obejście dla PHPStorm'a aby dobrze rozpoznował klassy z Laravel'a (np. Fasady)
+Ostatnim elementem, o którym warto wspomnie to plik _ide_helper.php jest to obejście dla IDE aby dobrze rozpoznował klasy z Laravel'a (np. Fasady)
 
 ## Instrukcja uruchomienia
 
