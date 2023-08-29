@@ -222,8 +222,8 @@ class CompaniesController extends Controller
      *            response=400,
      *            description="Bad Request",
      *            @OA\JsonContent(
-     *              @OA\Property(property="success", type="bool"),
-     *              @OA\Property(property="fieldName", type="array", @OA\Items(anyOf={@OA\Schema(type="string")}))
+     *               @OA\Property(property="success", type="bool", example="false"),
+     *               @OA\Property(property="message", type="array", @OA\Items(ref="#/components/schemas/Validation"))
      *           )
      *      ),
      *)
@@ -241,7 +241,7 @@ class CompaniesController extends Controller
         );
 
         if ($validate->fails()) {
-            return response()->json(["success" => false, $validate->errors()], 400);
+            return response()->json(["success" => false, 'message' => $validate->errors()], 400);
         }
 
         $company = $this->getCompanyById($id);
@@ -321,8 +321,8 @@ class CompaniesController extends Controller
      *            response=400,
      *            description="Bad Request",
      *            @OA\JsonContent(
-     *              @OA\Property(property="success", type="bool"),
-     *              @OA\Property(property="fieldName", type="array", @OA\Items(anyOf={@OA\Schema(type="string")}))
+     *               @OA\Property(property="success", type="bool", example="false"),
+     *               @OA\Property(property="message", type="array", @OA\Items(ref="#/components/schemas/Validation"))
      *           )
      *      ),
      *)
@@ -340,7 +340,7 @@ class CompaniesController extends Controller
         );
 
         if ($validate->fails()) {
-            return response()->json(["success" => false, $validate->errors()], 400);
+            return response()->json(["success" => false, 'message' => $validate->errors()], 400);
         }
 
         $company = $this->getCompanyById($id);
@@ -413,7 +413,8 @@ class CompaniesController extends Controller
      *            response=400,
      *            description="Bad Request",
      *            @OA\JsonContent(
-     *              @OA\Property(property="fieldName", type="array", @OA\Items(anyOf={@OA\Schema(type="string")}))
+     *               @OA\Property(property="success", type="bool", example="false"),
+     *               @OA\Property(property="message", type="array", @OA\Items(ref="#/components/schemas/Validation"))
      *           )
      *      ),
      *)
@@ -431,7 +432,7 @@ class CompaniesController extends Controller
         );
 
         if ($validate->fails()) {
-            return response()->json([$validate->errors()], 400);
+            return response()->json(["success" => false, 'message' => $validate->errors()], 400);
         }
 
         try {

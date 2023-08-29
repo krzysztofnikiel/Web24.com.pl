@@ -45,7 +45,12 @@ use Illuminate\Routing\Controller as BaseController;
  *     bearerFormat="JWT",
  *     securityScheme="apiAuth",
  * )
- *
+ *   @OA\Schema(
+ *      schema="Validation",
+ *      type="object",
+ *      @OA\Property(property="fieldName", type="array", @OA\Items(anyOf={@OA\Schema(type="string"), @OA\Schema(type="string")})
+ *      )
+ *   )
  *   @OA\Schema(
  *     schema="CompanyWithEmployees",
  *     type="object",
