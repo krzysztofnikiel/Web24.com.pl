@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\CompaniesController;
+use App\Http\Controllers\Api\EmployeesController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -27,5 +28,12 @@ Route::group(['prefix' => 'v1',], function () {
         Route::delete('companies/delete/{id}', [CompaniesController::class, 'delete']);
         Route::patch('companies/patch/{id}', [CompaniesController::class, 'patch']);
         Route::put('companies/put/{id}', [CompaniesController::class, 'put']);
+
+        Route::get('employees', [EmployeesController::class, 'index']);
+        Route::get('employees/{id}', [EmployeesController::class, 'read']);
+        Route::post('employees/create', [EmployeesController::class, 'create']);
+        Route::delete('employees/delete/{id}', [EmployeesController::class, 'delete']);
+        Route::patch('employees/patch/{id}', [EmployeesController::class, 'patch']);
+        Route::put('employees/put/{id}', [EmployeesController::class, 'put']);
     });
 });

@@ -3,16 +3,10 @@
 namespace Tests\Unit\Model;
 
 use App\Models\Company;
-use Carbon\Carbon;
 use Tests\TestCase;
 
 class CompanyTest extends TestCase
 {
-    public function setUp(): void
-    {
-        parent::setUp();
-    }
-
     /**
      * @return void
      * @test
@@ -36,9 +30,20 @@ class CompanyTest extends TestCase
     {
         return [
             [
+                'input' => [],
+                'expected' => [
+                    'name' => 'Test',
+                    'city' => 'Zakopane',
+                    'nip' => 4175718909,
+                    'post_code' => 81989,
+                    'address' => '3 maja 14/2'
+                ]
+            ],
+            [
                 'input' => [
                     'name' => 'Apple',
-                    'city' => 'Wawa'
+                    'city' => 'Wawa',
+                    'unknown' => false
                 ],
                 'expected' => [
                     'name' => 'Apple',
@@ -47,7 +52,6 @@ class CompanyTest extends TestCase
                     'post_code' => 81989,
                     'address' => '3 maja 14/2'
                 ]
-
             ],
             [
                 'input' => [
@@ -68,9 +72,9 @@ class CompanyTest extends TestCase
     /**
      * @test
      * @return void
-     * @dataProvider companiesPutOrCreateProvider
+     * @dataProvider companiesPutProvider
      */
-    public function putCompany($request, $expected)
+    public function putCompany($request, $expected, $exist)
     {
         $company = new Company();
         $company->name = $request['name'];
@@ -78,18 +82,69 @@ class CompanyTest extends TestCase
         $company->city = $request['city'];
         $company->post_code = $request['post_code'];
         $company->address = $request['address'];
-        $company->put($request);
+        if ($exist) {
+            $company->id = $request['id'];
+        }
+        $company->put($request, $request['id']);
 
         $this->checkDefaultAssertion($company, $expected);
-        $this->assertNull($company->created_at);
-        $this->assertNotEmpty($company->updated_at);
+        if ($exist) {
+            $this->assertNull($company->created_at);
+            $this->assertNotEmpty($company->updated_at);
+            return;
+        }
+        $this->assertNotEmpty($company->created_at);
+        $this->assertNull($company->updated_at);
     }
 
+    public static function companiesPutProvider(): array
+    {
+        return [
+            [
+                'input' => [
+                    'id' => 11,
+                    'name' => 'Apple',
+                    'city' => 'Wawa',
+                    'nip' => 4175718909,
+                    'post_code' => 81989,
+                    'address' => '3 maja 14/2'
+                ],
+                'expected' => [
+                    'id' => 11,
+                    'name' => 'Apple',
+                    'city' => 'Wawa',
+                    'nip' => 4175718909,
+                    'post_code' => 81989,
+                    'address' => '3 maja 14/2'
+                ],
+                false
+            ],
+            [
+                'input' => [
+                    'id' => 22,
+                    'name' => 'Test',
+                    'city' => 'Zakopane',
+                    'nip' => 7971663669,
+                    'post_code' => 81989,
+                    'address' => '3 maja 14/2'
+                ],
+                'expected' => [
+                    'id' => 22,
+                    'name' => 'Test',
+                    'city' => 'Zakopane',
+                    'nip' => 7971663669,
+                    'post_code' => 81989,
+                    'address' => '3 maja 14/2'
+                ],
+                true
+            ],
+        ];
+    }
 
     /**
      * @test
      * @return void
-     * @dataProvider companiesPutOrCreateProvider
+     * @dataProvider companiesCreateProvider
      */
     public function createCompany($request, $expected)
     {
@@ -99,14 +154,14 @@ class CompanyTest extends TestCase
         $company->city = $request['city'];
         $company->post_code = $request['post_code'];
         $company->address = $request['address'];
-        $company->create($request);
+        $company->add($request);
 
         $this->checkDefaultAssertion($company, $expected);
         $this->assertNotEmpty($company->created_at);
         $this->assertNull($company->updated_at);
     }
 
-    public static function companiesPutOrCreateProvider(): array
+    public static function companiesCreateProvider(): array
     {
         return [
             [

@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
@@ -32,14 +31,16 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @method static \Illuminate\Database\Eloquent\Builder|Employee whereUpdatedAt($value)
  * @mixin \Eloquent
  */
-class Employee extends Model
+class Employee extends CrudModelAbstract
 {
-    use HasFactory;
-
     protected $table = 'employees';
 
-    protected $hidden = [
-        'deleted_at'
+    protected $fillable = [
+        'firstname',
+        'lastname',
+        'email',
+        'phone_number',
+        'company_id',
     ];
 
     protected $casts = [
@@ -48,7 +49,7 @@ class Employee extends Model
         'deleted_at' => 'datetime',
     ];
 
-    public function post(): BelongsTo
+    public function company(): BelongsTo
     {
         return $this->belongsTo(Company::class);
     }

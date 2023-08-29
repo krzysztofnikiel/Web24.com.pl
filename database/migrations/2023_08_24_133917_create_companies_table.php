@@ -19,7 +19,7 @@ return new class extends Migration
             $table->text('address');
             $table->integer('post_code');
             $table->timestamps();
-            $table->softDeletes();
+            $table->softDeletes()->index();
         });
     }
 

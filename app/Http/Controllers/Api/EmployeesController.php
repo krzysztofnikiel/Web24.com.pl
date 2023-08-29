@@ -2,34 +2,27 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Models\Company;
 use App\Models\Employee;
-use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
-class CompaniesController extends Controller
+class EmployeesController extends Controller
 {
-    private function getCompanyById($id): Company|null
-    {
-        return Company::query()->whereNull('deleted_at')->where('id', '=', $id)->first();
-    }
-
     /**
      * @OA\Get(
-     *      path="/companies",
-     *      operationId="getComapniesList",
-     *      tags={"Companies"},
-     *      summary="Get list of companies",
+     *      path="/employees",
+     *      operationId="getEmployeesList",
+     *      tags={"Employees"},
+     *      summary="Get list of employees",
      *      security={{ "apiAuth": {} }},
      *      @OA\Response(
      *          response=200,
      *          description="OK",
      *          @OA\JsonContent(
      *              @OA\Property(property="success", type="bool"),
-     *              @OA\Property(property="data", type="array", @OA\Items(ref="#/components/schemas/CompanyWithEmployees"))
+     *              @OA\Property(property="data", type="array", @OA\Items(ref="#/components/schemas/Employee"))
      *          )
      *      ),
      *      @OA\Response(
@@ -44,34 +37,34 @@ class CompaniesController extends Controller
      */
     public function index(): JsonResponse
     {
-        $companies = Company::query()->with(['employees'])->whereNull('deleted_at')->get();
+        $employees = Employee::query()->whereNull('deleted_at')->get();
 
         return response()->json([
             "success" => true,
-            "data" => $companies
+            "data" => $employees
         ]);
     }
 
     /**
      * @OA\Get(
-     *      path="/companies/{id}",
-     *      operationId="getComapny",
-     *      tags={"Companies"},
+     *      path="/employees/{id}",
+     *      operationId="getEmployees",
+     *      tags={"Employees"},
      *      @OA\Parameter(
-     *          description="Company Id",
+     *          description="Employee Id",
      *          in="path",
      *          name="id",
      *          required=true,
      *          @OA\Schema(type="integer"),
      *      ),
-     *      summary="Get company",
+     *      summary="Get employee",
      *      security={{ "apiAuth": {} }},
      *      @OA\Response(
      *          response=200,
      *          description="OK",
      *          @OA\JsonContent(
      *              @OA\Property(property="success", type="bool"),
-     *              @OA\Property(property="data", type="object", ref="#/components/schemas/CompanyWithEmployees")
+     *              @OA\Property(property="data", type="object", ref="#/components/schemas/Employee")
      *          )
      *      ),
      *      @OA\Response(
@@ -90,29 +83,29 @@ class CompaniesController extends Controller
      */
     public function read($id): JsonResponse
     {
-        $company = Company::query()->whereNull('deleted_at')->with(['employees'])->where('id', '=', $id)->first();
-        if ($company === null) {
+        $employee = Employee::query()->whereNull('deleted_at')->where('id', '=', $id)->first();
+        if ($employee === null) {
             return response()->json(["success" => false], 404);
         }
         return response()->json([
             "success" => true,
-            "data" => $company
+            "data" => $employee
         ]);
     }
 
     /**
      * @OA\Delete (
-     *      path="/companies/delete/{id}",
-     *      operationId="deleteComapny",
-     *      tags={"Companies"},
+     *      path="/employees/delete/{id}",
+     *      operationId="deleteEmployee",
+     *      tags={"Employees"},
      *      @OA\Parameter(
-     *          description="Company Id",
+     *          description="Employee Id",
      *          in="path",
      *          name="id",
      *          required=true,
      *          @OA\Schema(type="integer"),
      *      ),
-     *      summary="Delete company",
+     *      summary="Delete Employee",
      *      security={{ "apiAuth": {} }},
      *      @OA\Response(
      *          response=200,
@@ -137,18 +130,14 @@ class CompaniesController extends Controller
      */
     public function delete($id): JsonResponse
     {
-        $company = $this->getCompanyById($id);
-        if ($company === null) {
+        $employee = Employee::query()->whereNull('deleted_at')->where('id', '=', $id)->first();
+        if ($employee === null) {
             return response()->json(["success" => false], 404);
         }
-        \DB::beginTransaction();
         try {
-
-            $company->remove();
-            $company->save();
-            \DB::commit();
+            $employee->remove();
+            $employee->save();
         } catch (\Exception $e) {
-            \DB::rollBack();
             Log::error($e);
             return response()->json(["success" => false], 500);
         }
@@ -158,11 +147,11 @@ class CompaniesController extends Controller
 
     /**
      * @OA\Patch (
-     *      path="/companies/patch/{id}",
-     *      operationId="patchComapny",
-     *      tags={"Companies"},
+     *      path="/employees/patch/{id}",
+     *      operationId="employeesComapny",
+     *      tags={"Employees"},
      *      @OA\Parameter(
-     *          description="Company Id",
+     *          description="Employee Id",
      *          in="path",
      *          name="id",
      *          required=true,
@@ -173,37 +162,33 @@ class CompaniesController extends Controller
      *              mediaType="application/json",
      *              @OA\Schema(
      *                  @OA\Property(
-     *                      property="name",
+     *                      property="firstname",
      *                      type="string"
      *                  ),
      *                  @OA\Property(
-     *                      property="nip",
+     *                      property="lastname",
      *                      type="int"
      *                  ),
      *                  @OA\Property(
-     *                      property="address",
+     *                      property="email",
      *                      type="string"
      *                  ),
      *                  @OA\Property(
-     *                      property="city",
+     *                      property="phone_number",
      *                      type="string"
      *                  ),
-     *                  @OA\Property(
-     *                      property="post_code",
-     *                      type="int"
-     *                  ),
-     *                  example={"name": "New Company Name", "nip": "9528837725", "address": "3 maja 14/2", "city": "Sopot", "post_code": "86123"}
+     *                  example={"firstname": "Jan", "lastname": "Kowalski", "email": "jan.kowalski@traknet.pl"}
      *              )
      *          )
      *      ),
-     *      summary="Update specific field/fields in company",
+     *      summary="Update specific field/fields in employee",
      *      security={{ "apiAuth": {} }},
      *      @OA\Response(
      *          response=200,
      *          description="OK",
      *          @OA\JsonContent(
      *              @OA\Property(property="success", type="bool"),
-     *              @OA\Property(property="data", type="object", ref="#/components/schemas/Company")
+     *              @OA\Property(property="data", type="object", ref="#/components/schemas/Employee")
      *          )
      *      ),
      *      @OA\Response(
@@ -232,11 +217,10 @@ class CompaniesController extends Controller
     {
         $validate = Validator::make($request->all(),
             [
-                'name' => 'max:255',
-                'nip' => 'NIP|unique:companies,nip,' . $id . ',id',
-                'city' => 'min:3|max:255',
-                'address' => 'min:3|max:255',
-                'post_code' => 'digits:5',
+                'firstname' => 'min:3|max:255',
+                'lastname' => 'min:3|max:255',
+                'email' => 'min:3|max:255|unique:employees,email,' . $id . ',id',
+                'phone_number' => 'nullable|min:6|max:14',
             ]
         );
 
@@ -244,28 +228,29 @@ class CompaniesController extends Controller
             return response()->json(["success" => false, $validate->errors()], 400);
         }
 
-        $company = $this->getCompanyById($id);
-        if ($company === null) {
+        $employee = Employee::query()->whereNull('deleted_at')->where('id', '=', $id)->first();
+        if ($employee === null) {
             return response()->json(["success" => false], 404);
         }
         try {
-            $company->patch($request->all());
-            $company->save();
+            $employee->patch($request->all());
+            $employee->save();
+            $employee->refresh();
         } catch (\Exception $e) {
             Log::error($e);
             return response()->json(["success" => false], 500);
         }
 
-        return response()->json(["success" => true, 'data' => $company]);
+        return response()->json(["success" => true, 'data' => $employee]);
     }
 
     /**
      * @OA\Put (
-     *      path="/companies/put/{id}",
-     *      operationId="putComapny",
-     *      tags={"Companies"},
+     *      path="/employees/put/{id}",
+     *      operationId="putEmployee",
+     *      tags={"Employees"},
      *      @OA\Parameter(
-     *          description="Company Id",
+     *          description="Employee Id",
      *          in="path",
      *          name="id",
      *          required=true,
@@ -276,37 +261,37 @@ class CompaniesController extends Controller
      *              mediaType="application/json",
      *              @OA\Schema(
      *                  @OA\Property(
-     *                      property="name",
+     *                      property="firstname",
      *                      type="string"
      *                  ),
      *                  @OA\Property(
-     *                      property="nip",
+     *                      property="lastname",
      *                      type="int"
      *                  ),
      *                  @OA\Property(
-     *                      property="address",
+     *                      property="email",
      *                      type="string"
      *                  ),
      *                  @OA\Property(
-     *                      property="city",
+     *                      property="phone_number",
      *                      type="string"
      *                  ),
      *                  @OA\Property(
-     *                      property="post_code",
+     *                      property="company_id",
      *                      type="int"
      *                  ),
-     *                  example={"name": "New Company Name", "nip": "9528837725", "address": "3 maja 14/2", "city": "Sopot", "post_code": "86123"}
+     *                   example={"firstname": "Jan", "lastname": "Kowalski", "email": "jan.kowalski@traknet.pl", "phone_number": "781 955 019", "company_id": 1}
      *              )
      *          )
      *      ),
-     *      summary="Update if company exist or insert new company",
+     *      summary="Update if employee exist or insert new employee",
      *      security={{ "apiAuth": {} }},
      *      @OA\Response(
      *          response=200,
      *          description="OK",
      *          @OA\JsonContent(
      *              @OA\Property(property="success", type="bool"),
-     *              @OA\Property(property="data", type="object", ref="#/components/schemas/Company")
+     *              @OA\Property(property="data", type="object", ref="#/components/schemas/Employee")
      *          )
      *      ),
      *      @OA\Response(
@@ -331,11 +316,11 @@ class CompaniesController extends Controller
     {
         $validate = Validator::make($request->all(),
             [
-                'name' => 'required|max:255',
-                'nip' => 'NIP|unique:companies,nip,' . $id . ',id',
-                'city' => 'required|min:3|max:255',
-                'address' => 'required|min:3|max:255',
-                'post_code' => 'required|digits:5',
+                'firstname' => 'min:3|max:255',
+                'lastname' => 'min:3|max:255',
+                'email' => 'min:3|max:255|unique:employees,email,' . $id . ',id',
+                'phone_number' => 'nullable|min:6|max:14',
+                'company_id' => 'digits',
             ]
         );
 
@@ -343,62 +328,63 @@ class CompaniesController extends Controller
             return response()->json(["success" => false, $validate->errors()], 400);
         }
 
-        $company = $this->getCompanyById($id);
-        if ($company === null) {
-            $company = new Company();
+        $employee = Employee::query()->whereNull('deleted_at')->where('id', '=', $id)->first();
+        if ($employee === null) {
+            $employee = new Employee();
         }
         try {
-            $company->put($request->all(), $id);
-            $company->save();
+            $employee->put($request->all(), $id);
+            $employee->save();
+            $employee->refresh();
         } catch (\Exception $e) {
             Log::error($e);
             return response()->json(["success" => false], 500);
         }
 
-        return response()->json(["success" => true, 'data' => $company]);
+        return response()->json(["success" => true, 'data' => $employee]);
     }
 
     /**
      * @OA\Post (
-     *      path="/companies/create",
-     *      operationId="createComapny",
-     *      tags={"Companies"},
+     *      path="/employees/create",
+     *      operationId="createEmployee",
+     *      tags={"Employees"},
      *      @OA\RequestBody(
      *          @OA\MediaType(
      *              mediaType="application/json",
      *              @OA\Schema(
-     *                  @OA\Property(
-     *                      property="name",
-     *                      type="string"
-     *                  ),
-     *                  @OA\Property(
-     *                      property="nip",
-     *                      type="int"
-     *                  ),
-     *                  @OA\Property(
-     *                      property="address",
-     *                      type="string"
-     *                  ),
-     *                  @OA\Property(
-     *                      property="city",
-     *                      type="string"
-     *                  ),
-     *                  @OA\Property(
-     *                      property="post_code",
-     *                      type="int"
-     *                  ),
-     *                  example={"name": "New Company Name", "nip": "9528837725", "address": "3 maja 14/2", "city": "Sopot", "post_code": "86123"}
+     *                    @OA\Property(
+     *                       property="firstname",
+     *                       type="string"
+     *                   ),
+     *                   @OA\Property(
+     *                       property="lastname",
+     *                       type="int"
+     *                   ),
+     *                   @OA\Property(
+     *                       property="email",
+     *                       type="string"
+     *                   ),
+     *                   @OA\Property(
+     *                       property="phone_number",
+     *                       type="string"
+     *                   ),
+     *                   @OA\Property(
+     *                       property="company_id",
+     *                       type="int"
+     *                   ),
+     *                    example={"firstname": "Jan", "lastname": "Kowalski", "email": "jan.kowalski@traknet.pl", "phone_number": "781 955 019", "company_id": 1}
      *              )
      *          )
      *      ),
-     *      summary="Create new Company",
+     *      summary="Create new Employee",
      *      security={{ "apiAuth": {} }},
      *      @OA\Response(
      *          response=200,
      *          description="OK",
      *          @OA\JsonContent(
      *              @OA\Property(property="success", type="bool"),
-     *              @OA\Property(property="data", type="object", ref="#/components/schemas/Company")
+     *              @OA\Property(property="data", type="object", ref="#/components/schemas/Employee")
      *          )
      *      ),
      *      @OA\Response(
@@ -422,11 +408,11 @@ class CompaniesController extends Controller
     {
         $validate = Validator::make($request->all(),
             [
-                'name' => 'required|max:255',
-                'nip' => 'required|NIP|unique:companies,nip',
-                'city' => 'required|min:3|max:255',
-                'address' => 'required|min:3|max:255',
-                'post_code' => 'required|digits:5',
+                'firstname' => 'required|min:3|max:255',
+                'lastname' => 'required|min:3|max:255',
+                'email' => 'required|min:3|max:255|unique:employees,email',
+                'phone_number' => 'nullable|min:6|max:14',
+                'company_id' => 'required|numeric|min:1',
             ]
         );
 
@@ -435,7 +421,7 @@ class CompaniesController extends Controller
         }
 
         try {
-            $company = new Company();
+            $company = new Employee();
             $company->add($request->all());
             $company->save();
             $company->refresh();

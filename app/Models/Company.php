@@ -38,16 +38,9 @@ use phpDocumentor\Reflection\Types\Integer;
  * @method static \Illuminate\Database\Eloquent\Builder|Company withoutTrashed()
  * @mixin \Eloquent
  */
-class Company extends Model
+class Company extends CrudModelAbstract
 {
-    use HasFactory;
-    use SoftDeletes;
-
     protected $table = 'companies';
-
-    protected $hidden = [
-        'deleted_at'
-    ];
 
     protected $fillable = [
         'name',
@@ -72,70 +65,12 @@ class Company extends Model
     }
 
     /**
-     * @param array $request
-     * @return $this
+     * @return static
      */
-    public function patch(array $request): static
+    public function remove(): static
     {
-        if (isset($request['name'])) {
-            $this->name = $request['name'];
-        }
-
-        if (isset($request['nip'])) {
-            $this->nip = $request['nip'];
-        }
-
-        if (isset($request['address'])) {
-            $this->address = $request['address'];
-        }
-
-        if (isset($request['city'])) {
-            $this->city = $request['city'];
-        }
-
-        if (isset($request['post_code'])) {
-            $this->post_code = $request['post_code'];
-        }
-
-        $this->updated_at = new Carbon();
-
-        return $this;
-    }
-
-    /**
-     * @param array $request
-     * @return $this
-     */
-    public function put(array $request): static
-    {
-        $this->fillFields($request);
-
-        return $this;
-    }
-
-    /**
-     * @param array $request
-     * @return $this
-     */
-    public function create(array $request): static
-    {
-        $this->fillFields($request);
-        $this->created_at = new Carbon();
-
-        return $this;
-    }
-
-    /**
-     * @param array $request
-     * @return $this
-     */
-    private function fillFields(array $request): static
-    {
-        $this->name = $request['name'];
-        $this->nip = $request['nip'];
-        $this->address = $request['address'];
-        $this->city = $request['city'];
-        $this->post_code = $request['post_code'];
+        Employee::query()->where('company_id', '=', $this->id)->update(['deleted_at' => new Carbon()]);
+        parent::remove();
 
         return $this;
     }

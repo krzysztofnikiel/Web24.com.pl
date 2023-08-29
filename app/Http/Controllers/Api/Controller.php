@@ -32,6 +32,10 @@ use Illuminate\Routing\Controller as BaseController;
  *      name="Companies",
  *      description="API for companies managment"
  *  )
+ * @OA\Tag(
+ *      name="Employees",
+ *      description="API for employees managment"
+ *  )
  * @OA\SecurityScheme(
  *     type="http",
  *     description="Login with email and password to get the authentication token",
