@@ -17,7 +17,8 @@ Ostatnim elementem, o którym warto wspomnie to plik _ide_helper.php jest to obe
 ## Instrukcja uruchomienia
 
 Tworzymy .env na bazie .env.example
-Ustawiamy w konfiguracji odpowiednią ścieżke dla: L5_SWAGGER_CONST_HOST=http://localhost/zadanie/public/api/v1
+
+Ustawiamy w konfiguracji odpowiednią ścieżke dla: L5_SWAGGER_CONST_HOST=http://localhost/zadanie/public/api/v1 (zmiana tego parametru wymaga odpalenia 2 komend: "php artisan optimize" i "php artisan l5-swagger:generate")
 
 Uruchamiamy komendy:
  - composer install
