@@ -70,7 +70,7 @@ class AuthController extends Controller
             ]
         );
 
-        if($validateUser->fails()){
+        if ($validateUser->fails()) {
             return response()->json([$validateUser->errors()], 400);
         }
 
@@ -80,6 +80,5 @@ class AuthController extends Controller
         }
 
         return response()->json([], 401);
-
     }
 }

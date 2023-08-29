@@ -3,12 +3,8 @@
 namespace App\Models;
 
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Support\Facades\Request;
-use phpDocumentor\Reflection\Types\Integer;
 
 /**
  * App\Models\Companies
@@ -19,23 +15,23 @@ use phpDocumentor\Reflection\Types\Integer;
  * @property string $address
  * @property string $city
  * @property int $post_code
- * @property mixed|null $created_at
- * @property mixed|null $updated_at
- * @property mixed|null $deleted_at
- * @method static \Illuminate\Database\Eloquent\Builder|Company newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|Company newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|Company onlyTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder|Company query()
- * @method static \Illuminate\Database\Eloquent\Builder|Company whereAddress($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Company whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Company whereDeletedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Company whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Company whereName($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Company whereNip($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Company wherePostCode($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Company whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Company withTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder|Company withoutTrashed()
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
+ * @property Carbon|null $deleted_at
+ * @method static Builder|Company newModelQuery()
+ * @method static Builder|Company newQuery()
+ * @method static Builder|Company onlyTrashed()
+ * @method static Builder|Company query()
+ * @method static Builder|Company whereAddress($value)
+ * @method static Builder|Company whereCreatedAt($value)
+ * @method static Builder|Company whereDeletedAt($value)
+ * @method static Builder|Company whereId($value)
+ * @method static Builder|Company whereName($value)
+ * @method static Builder|Company whereNip($value)
+ * @method static Builder|Company wherePostCode($value)
+ * @method static Builder|Company whereUpdatedAt($value)
+ * @method static Builder|Company withTrashed()
+ * @method static Builder|Company withoutTrashed()
  * @mixin \Eloquent
  */
 class Company extends CrudModelAbstract
@@ -65,7 +61,7 @@ class Company extends CrudModelAbstract
     }
 
     /**
-     * @return static
+     * @return $this
      */
     public function remove(): static
     {

@@ -3,8 +3,6 @@
 namespace App\Http\Controllers\Api;
 
 use App\Models\Company;
-use App\Models\Employee;
-use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Http\Request;
@@ -12,11 +10,6 @@ use Illuminate\Support\Facades\Validator;
 
 class CompaniesController extends Controller
 {
-    private function getCompanyById($id): Company|null
-    {
-        return Company::query()->whereNull('deleted_at')->where('id', '=', $id)->first();
-    }
-
     /**
      * @OA\Get(
      *      path="/companies",
@@ -46,10 +39,7 @@ class CompaniesController extends Controller
     {
         $companies = Company::query()->with(['employees'])->whereNull('deleted_at')->get();
 
-        return response()->json([
-            "success" => true,
-            "data" => $companies
-        ]);
+        return response()->json(['success' => true, 'data' => $companies]);
     }
 
     /**
@@ -92,11 +82,12 @@ class CompaniesController extends Controller
     {
         $company = Company::query()->whereNull('deleted_at')->with(['employees'])->where('id', '=', $id)->first();
         if ($company === null) {
-            return response()->json(["success" => false], 404);
+            return response()->json(['success' => false], 404);
         }
+
         return response()->json([
-            "success" => true,
-            "data" => $company
+            'success' => true,
+            'data' => $company
         ]);
     }
 
@@ -139,7 +130,7 @@ class CompaniesController extends Controller
     {
         $company = $this->getCompanyById($id);
         if ($company === null) {
-            return response()->json(["success" => false], 404);
+            return response()->json(['success' => false], 404);
         }
         \DB::beginTransaction();
         try {
@@ -150,10 +141,11 @@ class CompaniesController extends Controller
         } catch (\Exception $e) {
             \DB::rollBack();
             Log::error($e);
-            return response()->json(["success" => false], 500);
+
+            return response()->json(['success' => false], 500);
         }
 
-        return response()->json(["success" => true]);
+        return response()->json(['success' => true]);
     }
 
     /**
@@ -241,22 +233,23 @@ class CompaniesController extends Controller
         );
 
         if ($validate->fails()) {
-            return response()->json(["success" => false, 'message' => $validate->errors()], 400);
+            return response()->json(['success' => false, 'message' => $validate->errors()], 400);
         }
 
         $company = $this->getCompanyById($id);
         if ($company === null) {
-            return response()->json(["success" => false], 404);
+            return response()->json(['success' => false], 404);
         }
         try {
             $company->patch($request->all());
             $company->save();
         } catch (\Exception $e) {
             Log::error($e);
-            return response()->json(["success" => false], 500);
+
+            return response()->json(['success' => false], 500);
         }
 
-        return response()->json(["success" => true, 'data' => $company]);
+        return response()->json(['success' => true, 'data' => $company]);
     }
 
     /**
@@ -332,7 +325,7 @@ class CompaniesController extends Controller
         $validate = Validator::make($request->all(),
             [
                 'name' => 'required|max:255',
-                'nip' => 'NIP|unique:companies,nip,' . $id . ',id',
+                'nip' => 'required|NIP|unique:companies,nip,' . $id . ',id',
                 'city' => 'required|min:3|max:255',
                 'address' => 'required|min:3|max:255',
                 'post_code' => 'required|digits:5',
@@ -340,7 +333,8 @@ class CompaniesController extends Controller
         );
 
         if ($validate->fails()) {
-            return response()->json(["success" => false, 'message' => $validate->errors()], 400);
+
+            return response()->json(['success' => false, 'message' => $validate->errors()], 400);
         }
 
         $company = $this->getCompanyById($id);
@@ -350,12 +344,14 @@ class CompaniesController extends Controller
         try {
             $company->put($request->all(), $id);
             $company->save();
+            $company->refresh();
         } catch (\Exception $e) {
             Log::error($e);
-            return response()->json(["success" => false], 500);
+
+            return response()->json(['success' => false], 500);
         }
 
-        return response()->json(["success" => true, 'data' => $company]);
+        return response()->json(['success' => true, 'data' => $company]);
     }
 
     /**
@@ -432,7 +428,7 @@ class CompaniesController extends Controller
         );
 
         if ($validate->fails()) {
-            return response()->json(["success" => false, 'message' => $validate->errors()], 400);
+            return response()->json(['success' => false, 'message' => $validate->errors()], 400);
         }
 
         try {
@@ -442,9 +438,19 @@ class CompaniesController extends Controller
             $company->refresh();
         } catch (\Exception $e) {
             Log::error($e);
-            return response()->json(["success" => false], 500);
+
+            return response()->json(['success' => false], 500);
         }
 
-        return response()->json(["success" => true, 'data' => $company]);
+        return response()->json(['success' => true, 'data' => $company]);
+    }
+
+    /**
+     * @param int $id
+     * @return Company|null
+     */
+    private function getCompanyById(int $id): Company|null
+    {
+        return Company::query()->whereNull('deleted_at')->where('id', '=', $id)->first();
     }
 }

@@ -39,10 +39,7 @@ class EmployeesController extends Controller
     {
         $employees = Employee::query()->whereNull('deleted_at')->get();
 
-        return response()->json([
-            "success" => true,
-            "data" => $employees
-        ]);
+        return response()->json(['success' => true, 'data' => $employees]);
     }
 
     /**
@@ -83,14 +80,12 @@ class EmployeesController extends Controller
      */
     public function read($id): JsonResponse
     {
-        $employee = Employee::query()->whereNull('deleted_at')->where('id', '=', $id)->first();
+        $employee = $this->getEmployeeById($id);
         if ($employee === null) {
-            return response()->json(["success" => false], 404);
+            return response()->json(['success' => false], 404);
         }
-        return response()->json([
-            "success" => true,
-            "data" => $employee
-        ]);
+
+        return response()->json(['success' => true, 'data' => $employee]);
     }
 
     /**
@@ -130,19 +125,19 @@ class EmployeesController extends Controller
      */
     public function delete($id): JsonResponse
     {
-        $employee = Employee::query()->whereNull('deleted_at')->where('id', '=', $id)->first();
+        $employee = $this->getEmployeeById($id);
         if ($employee === null) {
-            return response()->json(["success" => false], 404);
+            return response()->json(['success' => false], 404);
         }
         try {
             $employee->remove();
             $employee->save();
         } catch (\Exception $e) {
             Log::error($e);
-            return response()->json(["success" => false], 500);
+            return response()->json(['success' => false], 500);
         }
 
-        return response()->json(["success" => true]);
+        return response()->json(['success' => true]);
     }
 
     /**
@@ -225,23 +220,22 @@ class EmployeesController extends Controller
         );
 
         if ($validate->fails()) {
-            return response()->json(["success" => false, 'message' => $validate->errors()], 400);
+            return response()->json(['success' => false, 'message' => $validate->errors()], 400);
         }
 
-        $employee = Employee::query()->whereNull('deleted_at')->where('id', '=', $id)->first();
+        $employee = $this->getEmployeeById($id);
         if ($employee === null) {
-            return response()->json(["success" => false], 404);
+            return response()->json(['success' => false], 404);
         }
         try {
             $employee->patch($request->all());
             $employee->save();
-            $employee->refresh();
         } catch (\Exception $e) {
             Log::error($e);
-            return response()->json(["success" => false], 500);
+            return response()->json(['success' => false], 500);
         }
 
-        return response()->json(["success" => true, 'data' => $employee]);
+        return response()->json(['success' => true, 'data' => $employee]);
     }
 
     /**
@@ -316,19 +310,19 @@ class EmployeesController extends Controller
     {
         $validate = Validator::make($request->all(),
             [
-                'firstname' => 'min:3|max:255',
-                'lastname' => 'min:3|max:255',
-                'email' => 'min:3|max:255|unique:employees,email,' . $id . ',id',
+                'firstname' => 'required|min:3|max:255',
+                'lastname' => 'required|min:3|max:255',
+                'email' => 'required|min:3|max:255|unique:employees,email,' . $id . ',id',
                 'phone_number' => 'nullable|min:6|max:14',
-                'company_id' => 'digits',
+                'company_id' => 'required|digits',
             ]
         );
 
         if ($validate->fails()) {
-            return response()->json(["success" => false, 'message' => $validate->errors()], 400);
+            return response()->json(['success' => false, 'message' => $validate->errors()], 400);
         }
 
-        $employee = Employee::query()->whereNull('deleted_at')->where('id', '=', $id)->first();
+        $employee = $this->getEmployeeById($id);
         if ($employee === null) {
             $employee = new Employee();
         }
@@ -338,10 +332,10 @@ class EmployeesController extends Controller
             $employee->refresh();
         } catch (\Exception $e) {
             Log::error($e);
-            return response()->json(["success" => false], 500);
+            return response()->json(['success' => false], 500);
         }
 
-        return response()->json(["success" => true, 'data' => $employee]);
+        return response()->json(['success' => true, 'data' => $employee]);
     }
 
     /**
@@ -418,7 +412,7 @@ class EmployeesController extends Controller
         );
 
         if ($validate->fails()) {
-            return response()->json(["success" => false, 'message' => $validate->errors()], 400);
+            return response()->json(['success' => false, 'message' => $validate->errors()], 400);
         }
 
         try {
@@ -428,9 +422,18 @@ class EmployeesController extends Controller
             $company->refresh();
         } catch (\Exception $e) {
             Log::error($e);
-            return response()->json(["success" => false], 500);
+            return response()->json(['success' => false], 500);
         }
 
-        return response()->json(["success" => true, 'data' => $company]);
+        return response()->json(['success' => true, 'data' => $company]);
+    }
+
+    /**
+     * @param int $id
+     * @return Employee|null
+     */
+    private function getEmployeeById(int $id): Employee|null
+    {
+        return Employee::query()->whereNull('deleted_at')->where('id', '=', $id)->first();
     }
 }

@@ -2,8 +2,9 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Carbon;
 
 /**
  * App\Models\Employees
@@ -14,21 +15,21 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property string $lastname
  * @property string $email
  * @property string $phone_number
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property string|null $deleted_at
- * @method static \Illuminate\Database\Eloquent\Builder|Employee newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|Employee newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|Employee query()
- * @method static \Illuminate\Database\Eloquent\Builder|Employee whereCompanyId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Employee whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Employee whereDeletedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Employee whereEmail($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Employee whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Employee whereLastname($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Employee whereName($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Employee wherePhoneNumber($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Employee whereUpdatedAt($value)
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
+ * @property Carbon|null $deleted_at
+ * @method static Builder|Employee newModelQuery()
+ * @method static Builder|Employee newQuery()
+ * @method static Builder|Employee query()
+ * @method static Builder|Employee whereCompanyId($value)
+ * @method static Builder|Employee whereCreatedAt($value)
+ * @method static Builder|Employee whereDeletedAt($value)
+ * @method static Builder|Employee whereEmail($value)
+ * @method static Builder|Employee whereId($value)
+ * @method static Builder|Employee whereLastname($value)
+ * @method static Builder|Employee whereName($value)
+ * @method static Builder|Employee wherePhoneNumber($value)
+ * @method static Builder|Employee whereUpdatedAt($value)
  * @mixin \Eloquent
  */
 class Employee extends CrudModelAbstract

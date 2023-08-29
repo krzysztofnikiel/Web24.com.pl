@@ -45,13 +45,13 @@ use Illuminate\Routing\Controller as BaseController;
  *     bearerFormat="JWT",
  *     securityScheme="apiAuth",
  * )
- *   @OA\Schema(
+ * @OA\Schema(
  *      schema="Validation",
  *      type="object",
  *      @OA\Property(property="fieldName", type="array", @OA\Items(anyOf={@OA\Schema(type="string"), @OA\Schema(type="string")})
  *      )
  *   )
- *   @OA\Schema(
+ * @OA\Schema(
  *     schema="CompanyWithEmployees",
  *     type="object",
  *
@@ -97,7 +97,7 @@ use Illuminate\Routing\Controller as BaseController;
  *     ),
  *     @OA\Property(property="employees", type="array", @OA\Items(ref="#/components/schemas/Employee"))
  *   )
- *   @OA\Schema(
+ * @OA\Schema(
  *     schema="Employee",
  *     type="object",
  *
@@ -143,7 +143,7 @@ use Illuminate\Routing\Controller as BaseController;
  *        example="2023-08-28T06:42:12.000000Z"
  *      ),
  *   )
- *   @OA\Schema(
+ * @OA\Schema(
  *     schema="Company",
  *     type="object",
  *
