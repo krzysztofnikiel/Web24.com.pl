@@ -1,8 +1,8 @@
 {
     "name": "laravel/laravel",
     "type": "project",
-    "description": "The skeleton application for the Laravel framework.",
-    "keywords": ["laravel", "framework"],
+    "description": "REST API Zadania rekrutacyjne web24.com.pl",
+    "keywords": ["laravel", "framework", "REST API"],
     "license": "MIT",
     "require": {
         "php": "^8.1",

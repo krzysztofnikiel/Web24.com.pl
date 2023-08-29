@@ -105,13 +105,13 @@ class EmployeeTest extends TestCase
                     'id' => 11,
                     'firstname' => 'Krzysztof',
                     'lastname' => 'Ni',
-                    'email' => 'emctrakers@gmail.com',
+                    'email' => 'test1@gmail.com',
                 ],
                 'expected' => [
                     'id' => 11,
                     'firstname' => 'Krzysztof',
                     'lastname' => 'Ni',
-                    'email' => 'emctrakers@gmail.com',
+                    'email' => 'test1@gmail.com',
                 ],
                 false
             ],
@@ -162,13 +162,13 @@ class EmployeeTest extends TestCase
                     'id' => 11,
                     'firstname' => 'Krzysztof',
                     'lastname' => 'Ni',
-                    'email' => 'emctrakers@gmail.com',
+                    'email' => 'test1@gmail.com',
                 ],
                 'expected' => [
                     'id' => 11,
                     'firstname' => 'Krzysztof',
                     'lastname' => 'Ni',
-                    'email' => 'emctrakers@gmail.com',
+                    'email' => 'test1@gmail.com',
                 ],
 
             ],
